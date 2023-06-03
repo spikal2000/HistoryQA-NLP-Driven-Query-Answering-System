@@ -10,56 +10,51 @@ from selenium.webdriver.common.by import By
 from webdriver_manager.firefox import GeckoDriverManager
 from bs4 import BeautifulSoup
 import time
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 
 
 
-def initialize_browser(num):
+
+def initialize_browser(n):
+    # time.sleep(1)
+    driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()))
     driver.get("https://flexbooks.ck12.org/user:zxbpc2rzcziwmthaz21hawwuy29t/cbook/world-history-studies_episd/")
     print("starting driver")
-    click_button = driver.find_element(by=By.ID, value='radix-'+num)
+    # time.sleep(10)
+    wait = WebDriverWait(driver, 15)
+    # click_button = driver.find_element(by=By.ID, value='radix-'+str(n))
+    click_button = wait.until(EC.presence_of_element_located((By.ID, 'radix-'+str(n))))
     click_button.click()
+    return driver
+    
+def get_links(parent):
 
-# setup driver
-driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()))
+    time.sleep(1)
+    chapter_links = {}
 
-initialize_browser("1")
-
-
-soup = BeautifulSoup(driver.page_source, 'html.parser')
-
-parent = soup.find('div', {'id': "course_item_child_1"})
-
-
-chapter_links = {}
-
-if parent:
-    desired_elements = parent.find_all('a')
-    for i in range(len(desired_elements)):
-        chapter_links[desired_elements[i].text] = desired_elements[i]['href']
-else:
-    print("No parent element found.")
+    if parent:
+        desired_elements = parent.find_all('a')
+        for i in range(len(desired_elements)):
+            chapter_links[desired_elements[i].text] = desired_elements[i]['href']
+    else:
+        print("No parent element found.")
+    
+    return chapter_links
 
 
 
-# # Now we can use BeautifulSoup to parse the HTML content
-# soup = BeautifulSoup(driver.page_source, 'html.parser')
-
-# # Find the parent div
-# parent = soup.find('div', {'class': "LevelItem__TextContainer-i60d4c-3 iQmFMO"})
-
-# if parent:
-#     desired_elements = parent.find_all('a')
-#     print(desired_elements)
-# else:
-#     print("No parent element found.")
-
-# # Remember to close the browser
-# driver.quit()
 
 
-# from selenium.webdriver.support.ui import WebDriverWait
-# from selenium.webdriver.common.by import By
-# from selenium.webdriver.support import expected_conditions as EC
-# WebDriverWait(dr, 20).until(EC.element_to_be_clickable(By.XPATH, //button[@class='Accordion__StyledContent-z6hx9p-4 kbSByO']))
+#1:{}
+chapters = []
+for num, i in enumerate(range(1, 20, 2)):
+
+    driver = initialize_browser(i)
+    soup = BeautifulSoup(driver.page_source, 'html.parser')
+    parent = soup.find('div', {'id': f"course_item_child_{num+1}"})
+    chapters.append(get_links(parent))
+
+
