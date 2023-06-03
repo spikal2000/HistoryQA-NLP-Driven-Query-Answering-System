@@ -58,27 +58,21 @@ def extract_info(chapters):
     
     # for i in range(0, len(chapters)):
     for i in range(0, 1):
-        p_text= []
         driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()))
         for key in chapters[i].keys():
-            p_text= []
             link = doc_link(chapters[i][key])
-            
+            # driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()))
             driver.get(link)
-            time.sleep(5)
-            # Wait up to 10 seconds for an element to be present
-            # WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'p')))
-            print("Soup")
+            time.sleep(7)
             soup = BeautifulSoup(driver.page_source, 'html.parser')
-            print("find pra")
-            paragraphs = soup.body.find_all('p')
-            print("cleaning")
-            p_text = [p.get_text() for p in paragraphs]
-            # print(p_text)
+            body_text = soup.body.get_text()
+            body_text = [tag.get_text() for tag in soup.body.descendants if tag.name]
             driver.quit()
-            
-            print("import dta")
-            data[key] = p_text
+            print("import data")
+            match = re.match(r'(\d+\.\d+)\xa0\xa0(.*)', key)
+            if match:
+                number, title = match.groups()
+                data[number] = {"title": title, "body_text": body_text}
     return data
 
 
@@ -101,13 +95,21 @@ def replace_pattern_in_urls(chapter_links_list, pattern):
 
 
 #Get the chapters from the first page
-chapters = []
-for num, i in enumerate(range(1, 20, 2)):
+# chapters = []
+# for num, i in enumerate(range(1, 20, 2)):
 
-    driver = initialize_browser(i)
-    soup = BeautifulSoup(driver.page_source, 'html.parser')
-    parent = soup.find('div', {'id': f"course_item_child_{num+1}"})
-    chapters.append(get_links(parent))
+#     driver = initialize_browser(i)
+#     soup = BeautifulSoup(driver.page_source, 'html.parser')
+#     parent = soup.find('div', {'id': f"course_item_child_{num+1}"})
+#     chapters.append(get_links(parent))
+
+# import pickle
+# with open('chapters.pickle', 'wb') as handle:
+#     pickle.dump(chapters, handle, protocol=pickle.HIGHEST_PROTOCOL)
+import pickle
+
+with open('chapters.pickle', 'rb') as handle:
+    chapters = pickle.load(handle)
 
 
 #clean the data
@@ -116,7 +118,7 @@ cleaned_chapters = replace_pattern_in_urls(chapters, pattern)
 
 
 #iterate in the evry page and gather the data
-extract_info(cleaned_chapters)
+data = extract_info(cleaned_chapters)
 
 
 
