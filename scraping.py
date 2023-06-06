@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 import time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
+from selenium.common.exceptions import TimeoutException
 import re
 from selenium.common.exceptions import TimeoutException, ElementNotInteractableException
 
@@ -55,25 +55,31 @@ def doc_link(new):
 
 def extract_info(chapters):
     data = {}
-    
-    # for i in range(0, len(chapters)):
-    for i in range(0, 1):
-        driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()))
+
+    for i in range(0, len(chapters)):
+    # for i in range(0, 1):
         for key in chapters[i].keys():
-            link = doc_link(chapters[i][key])
-            # driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()))
-            driver.get(link)
-            time.sleep(7)
-            soup = BeautifulSoup(driver.page_source, 'html.parser')
-            body_text = soup.body.get_text()
-            body_text = [tag.get_text() for tag in soup.body.descendants if tag.name]
-            driver.quit()
-            print("import data")
-            match = re.match(r'(\d+\.\d+)\xa0\xa0(.*)', key)
-            if match:
-                number, title = match.groups()
-                data[number] = {"title": title, "body_text": body_text}
+            with webdriver.Firefox(service=Service(GeckoDriverManager().install())) as driver:
+                driver.set_page_load_timeout(30)# Set timeout to 30 seconds
+                link = doc_link(chapters[i][key])
+                try:
+                    driver.get(link)
+                except TimeoutException:
+                    print("Loading took too much time!")
+                    # Here you can also handle what to do if the page load takes too much time
+                time.sleep(7)
+                soup = BeautifulSoup(driver.page_source, 'html.parser')
+                d = soup.find('div', {'class': f"x-ck12-data-concept"})
+                for p in d: 
+                    body_text = p.get_text()
+                # body_text = [tag.get_text() for tag in soup.body.descendants if tag.name]
+                print("import data")
+                match = re.match(r'(\d+\.\d+)\xa0\xa0(.*)', key)
+                if match:
+                    number, title = match.groups()
+                    data[number] = {"title": title, "body_text": body_text}
     return data
+
 
 
 
@@ -120,7 +126,8 @@ cleaned_chapters = replace_pattern_in_urls(chapters, pattern)
 #iterate in the evry page and gather the data
 data = extract_info(cleaned_chapters)
 
-
+# with open('chapters.pickle', 'wb') as handle:
+#     pickle.dump(chapters, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 # driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()))
