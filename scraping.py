@@ -156,25 +156,17 @@ with open('chapters.pickle', 'rb') as handle:
 
 #clean the data
 pattern = '/user:zxbpc2rzcziwmthaz21hawwuy29t/cbook/world-history-studies_episd'
-cleaned_chapters = replace_pattern_in_urls(chapters, pattern)
+# cleaned_chapters = replace_pattern_in_urls(chapters, pattern)
 
 
 #iterate in the evry page and gather the data
-data = extract_info(cleaned_chapters)
+# data = extract_info(cleaned_chapters)
 
-# with open('chapters.pickle', 'wb') as handle:
-#     pickle.dump(chapters, handle, protocol=pickle.HIGHEST_PROTOCOL)
+# with open('data.pickle', 'wb') as s:
+#     pickle.dump(chapters, s, protocol=pickle.HIGHEST_PROTOCOL)
+with open('data.pickle', 'rb') as s:
+    data = pickle.load(s)
 
-
-# driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()))
-# driver.get(link)
-# soup = BeautifulSoup(driver.page_source, 'html.parser')
-
-
-# # find all 'p' tags in the page
-# paragraphs = soup.body.find_all('p')
-# # Extract the text from each paragraph and add it to the list
-# p_text = [p.get_text() for p in paragraphs]
 
 
 
