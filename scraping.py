@@ -60,7 +60,7 @@ def extract_info(chapters):
     # for i in range(0, 1):
         for key in chapters[i].keys():
             with webdriver.Firefox(service=Service(GeckoDriverManager().install())) as driver:
-                driver.set_page_load_timeout(30)# Set timeout to 30 seconds
+                driver.set_page_load_timeout(60)# Set timeout to 30 seconds
                 link = doc_link(chapters[i][key])
                 try:
                     driver.get(link)
@@ -69,18 +69,53 @@ def extract_info(chapters):
                     # Here you can also handle what to do if the page load takes too much time
                 time.sleep(7)
                 soup = BeautifulSoup(driver.page_source, 'html.parser')
-                d = soup.find('div', {'class': f"x-ck12-data-concept"})
-                for p in d: 
-                    body_text = p.get_text()
+                
+                body_text = soup.find_all(text=True)
+
+
+                # p_elements = soup.find_all('p')
+                # if p_elements is not None:
+                #     body_text = [p.get_text() for p in p_elements]
+                
+                table_elements = soup.find_all('table')
+                if table_elements is not None:
+                    for table in table_elements:
+                        rows = table.find_all('tr')
+                        for row in rows:
+                            cells = row.find_all('td')
+                            for cell in cells:
+                                body_text.append(cell.get_text())
+
+                
+                # d = soup.find('div', {'class': f"x-ck12-data-concept"})
+                # table_content = []
+                # body_text = []
+                # if d is not None:
+                #     ps = d.find_all('p')
+                #     tables = soup.find_all('table')
+                #     if ps is not None:
+                #         for p in ps:
+                #             body_text.append(p.get_text())
+                #     if tables is not None:
+                #         for table in tables:
+                #             rows = table.find_all('tr')
+                #             table_data = []
+                #             for row in rows:
+                #                 cells = row.find_all('td')
+                #                 row_data = [cell.get_text() for cell in cells]
+                #                 table_data.append(row_data)
+                #             body_text.append(table_data)
+                        
                 # body_text = [tag.get_text() for tag in soup.body.descendants if tag.name]
                 print("import data")
+                print(body_text)
                 match = re.match(r'(\d+\.\d+)\xa0\xa0(.*)', key)
                 if match:
                     number, title = match.groups()
                     data[number] = {"title": title, "body_text": body_text}
     return data
 
-
+# {x: {y :[]}}
 
 
 def replace_pattern_in_urls(chapter_links_list, pattern):
@@ -139,14 +174,6 @@ data = extract_info(cleaned_chapters)
 # paragraphs = soup.body.find_all('p')
 # # Extract the text from each paragraph and add it to the list
 # p_text = [p.get_text() for p in paragraphs]
-
-
-
-
-
-
-
-
 
 
 
