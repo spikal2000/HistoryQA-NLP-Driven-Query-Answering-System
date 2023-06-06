@@ -69,8 +69,9 @@ def extract_info(chapters):
                     # Here you can also handle what to do if the page load takes too much time
                 time.sleep(7)
                 soup = BeautifulSoup(driver.page_source, 'html.parser')
+                body_text = []
                 
-                body_text = soup.find_all(text=True)
+                body_text.append(soup.find_all(text=True))
 
 
                 # p_elements = soup.find_all('p')
