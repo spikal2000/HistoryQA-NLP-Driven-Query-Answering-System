@@ -15,6 +15,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 import re
 from selenium.common.exceptions import TimeoutException, ElementNotInteractableException
+import csv
+import pandas as pd
 
 
 def initialize_browser(n):
@@ -170,16 +172,20 @@ cleaned_chapters = replace_pattern_in_urls(chapters, pattern)
 
 
 #iterate in the evry page and gather the data
-data = extract_info(cleaned_chapters)
-#save picle
-# with open('data1.pickle', 'rb') as handle:
-#     data = pickle.load(handle)
-
+# data = extract_info(cleaned_chapters)
 #load picle
+with open('data1.pickle', 'rb') as handle:
+    data = pickle.load(handle)
+
+#save picle
 # with open('data1.pickle', 'wb') as handle:
 #     pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
     
+# Convert data into a list of dictionaries, adding 'number' as a key
+data_list = [{"number": number, **info} for number, info in data.items()]
 
+# Convert the list into a DataFrame
+df = pd.DataFrame(data_list).reset_index()
 
-
-
+# Write the DataFrame to a CSV file
+df.to_csv("output.csv", index=False)
