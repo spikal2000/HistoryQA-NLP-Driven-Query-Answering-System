@@ -69,9 +69,14 @@ def extract_info(chapters):
                     # Here you can also handle what to do if the page load takes too much time
                 time.sleep(7)
                 soup = BeautifulSoup(driver.page_source, 'html.parser')
+                div_element = soup.find('div', class_='x-ck12-data-concept')
                 body_text = []
+                if div_element is not None:
+                    content = div_element.get_text(strip=True)
+                    body_text.append(content)
                 
-                body_text.append(soup.find_all(text=True))
+                
+                
 
 
                 # p_elements = soup.find_all('p')
@@ -108,11 +113,16 @@ def extract_info(chapters):
                 #             body_text.append(table_data)
                         
                 # body_text = [tag.get_text() for tag in soup.body.descendants if tag.name]
-                print("import data")
-                print(body_text)
+                
+                
                 match = re.match(r'(\d+\.\d+)\xa0\xa0(.*)', key)
+                #convert nested list to one
+                # dt = [item for sublist in body_text for item in sublist]
+                body_text = " ".join(body_text)
+                print(body_text)
                 if match:
                     number, title = match.groups()
+                    print(number, "loading")
                     data[number] = {"title": title, "body_text": body_text}
     return data
 
@@ -156,16 +166,19 @@ with open('chapters.pickle', 'rb') as handle:
 
 #clean the data
 pattern = '/user:zxbpc2rzcziwmthaz21hawwuy29t/cbook/world-history-studies_episd'
-# cleaned_chapters = replace_pattern_in_urls(chapters, pattern)
+cleaned_chapters = replace_pattern_in_urls(chapters, pattern)
 
 
 #iterate in the evry page and gather the data
-# data = extract_info(cleaned_chapters)
+data = extract_info(cleaned_chapters)
+#save picle
+# with open('data1.pickle', 'rb') as handle:
+#     data = pickle.load(handle)
 
-# with open('data.pickle', 'wb') as s:
-#     pickle.dump(chapters, s, protocol=pickle.HIGHEST_PROTOCOL)
-with open('data.pickle', 'rb') as s:
-    data = pickle.load(s)
+#load picle
+# with open('data1.pickle', 'wb') as handle:
+#     pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    
 
 
 
