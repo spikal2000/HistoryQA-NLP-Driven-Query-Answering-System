@@ -12,8 +12,11 @@ query = 'what can you tell me about Greece'
 results = search_engine.search(query, 5)
 # for result in results:
 #     print(result)
+doc = [result['body_text'] for result in results]
 
-openai.api_key = ''
+doc_text = ' '.join(doc)
+
+openai.api_key = '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'
 
 
 prompts = [
@@ -25,4 +28,15 @@ for prompt in prompts:
     
     full_prompt = f"{prompt} {query}"
     
-    response = openai
+    response = openai.Completion.create(
+            model = 'gpt-3.5-turbo',
+            prompt = full_prompt,
+            documents=doc_text,
+            max_tokens = 20,
+            n=1,
+            stop=None,
+            temperature = 0.7
+        )
+    
+generated_answer = response.choices[0].message.content
+
