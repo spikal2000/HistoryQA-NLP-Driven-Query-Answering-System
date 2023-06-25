@@ -7,4 +7,4 @@ This project involves the application of Natural Language Processing (NLP) and I
 -> Next, navigate to generativeAi.py. Here, input your question into the query variable.                                                            
 -> Finally, execute the generativeAi.py script. The system will generate and display the response to your query.
 
-Source: https://flexbooks.ck12.org/user:zxbpc2rzcziwmthaz21hawwuy29t/cbook/world-history-studies_episd/
+Source of Data: https://flexbooks.ck12.org/user:zxbpc2rzcziwmthaz21hawwuy29t/cbook/world-history-studies_episd/
