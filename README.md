@@ -6,3 +6,5 @@ This project involves the application of Natural Language Processing (NLP) and I
 -> Begin by running the scraping.py file to fetch the data. Alternatively, you can use the pre-existing output.csv.                       
 -> Next, navigate to generativeAi.py. Here, input your question into the query variable.                                                            
 -> Finally, execute the generativeAi.py script. The system will generate and display the response to your query.
+
+Source: https://flexbooks.ck12.org/user:zxbpc2rzcziwmthaz21hawwuy29t/cbook/world-history-studies_episd/
