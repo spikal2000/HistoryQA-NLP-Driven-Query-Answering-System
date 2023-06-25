@@ -4,5 +4,5 @@ This project involves the application of Natural Language Processing (NLP) and I
 
 # How to Run
 -> Begin by running the scraping.py file to fetch the data. Alternatively, you can use the pre-existing output.csv if it contains the required data.
--> Next, navigate to generativeAi.py. Here, input your question into the query variable.
+-> Next, navigate to generativeAi.py. Here, input your question into the query variable.                                                            
 -> Finally, execute the generativeAi.py script. The system will generate and display the response to your query.
